@@ -111,6 +111,8 @@ body {
   font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
 }
 
 .glass-card {
@@ -233,6 +235,7 @@ html { scroll-behavior: smooth; }
   color: var(--landing-text);
   min-height: 100vh;
   overflow-x: hidden;
+  font-family: var(--font-inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
 }
 
 /* Nav */
