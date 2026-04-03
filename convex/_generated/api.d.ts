@@ -11,6 +11,8 @@
 import type * as appointments from "../appointments.js";
 import type * as auditLog from "../auditLog.js";
 import type * as clinicalNotes from "../clinicalNotes.js";
+import type * as emails from "../emails.js";
+import type * as notifications from "../notifications.js";
 import type * as patients from "../patients.js";
 
 import type {
@@ -23,6 +25,8 @@ declare const fullApi: ApiFromModules<{
   appointments: typeof appointments;
   auditLog: typeof auditLog;
   clinicalNotes: typeof clinicalNotes;
+  emails: typeof emails;
+  notifications: typeof notifications;
   patients: typeof patients;
 }>;
 

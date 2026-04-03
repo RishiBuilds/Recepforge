@@ -1,4 +1,5 @@
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 import { v } from "convex/values";
 
 const statusValues = v.union(
@@ -70,6 +71,22 @@ export const create = mutation({
       }),
       timestamp: now,
     });
+
+    const patient = await ctx.db.get(args.patientId);
+    if (patient) {
+      await ctx.scheduler.runAfter(0, internal.notifications.create, {
+        recipientUserId: args.userId,
+        organizationId: args.organizationId,
+        type: "appointment_created",
+        title: "New Appointment Scheduled",
+        message: `Appointment for ${patient.firstName} ${patient.lastName} with Dr. ${args.doctorName} on ${args.date} at ${args.startTime}.`,
+        entityType: "appointment",
+        entityId: appointmentId,
+        patientEmail: patient.email,
+        patientName: `${patient.firstName} ${patient.lastName}`,
+        emailSubject: `Appointment Confirmation - ${args.date} at ${args.startTime}`,
+      });
+    }
 
     return appointmentId;
   },
@@ -168,6 +185,22 @@ export const cancel = mutation({
       details: JSON.stringify({ cancelReason: args.cancelReason }),
       timestamp: Date.now(),
     });
+
+    const patient = await ctx.db.get(existing.patientId);
+    if (patient) {
+      await ctx.scheduler.runAfter(0, internal.notifications.create, {
+        recipientUserId: args.userId,
+        organizationId: args.organizationId,
+        type: "appointment_cancelled",
+        title: "Appointment Cancelled",
+        message: `Appointment for ${patient.firstName} ${patient.lastName} on ${existing.date} at ${existing.startTime} has been cancelled.${args.cancelReason ? ` Reason: ${args.cancelReason}` : ""}`,
+        entityType: "appointment",
+        entityId: args.id,
+        patientEmail: patient.email,
+        patientName: `${patient.firstName} ${patient.lastName}`,
+        emailSubject: `Appointment Cancelled - ${existing.date}`,
+      });
+    }
   },
 });
 
@@ -198,6 +231,23 @@ export const updateStatus = mutation({
       details: JSON.stringify({ from: existing.status, to: args.status }),
       timestamp: Date.now(),
     });
+
+    const patient = await ctx.db.get(existing.patientId);
+    if (patient) {
+      const notificationType = args.status === "confirmed" ? "appointment_confirmed" as const : "status_changed" as const;
+      await ctx.scheduler.runAfter(0, internal.notifications.create, {
+        recipientUserId: args.userId,
+        organizationId: args.organizationId,
+        type: notificationType,
+        title: `Appointment ${args.status.charAt(0).toUpperCase() + args.status.slice(1)}`,
+        message: `Appointment for ${patient.firstName} ${patient.lastName} has been updated to "${args.status}".`,
+        entityType: "appointment",
+        entityId: args.id,
+        patientEmail: args.status === "confirmed" ? patient.email : undefined,
+        patientName: `${patient.firstName} ${patient.lastName}`,
+        emailSubject: args.status === "confirmed" ? `Your Appointment is Confirmed - ${existing.date}` : undefined,
+      });
+    }
   },
 });
 

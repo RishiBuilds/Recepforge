@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import NotificationBell from "./NotificationBell";
 
 interface NavItem {
   label: string;
@@ -171,6 +172,7 @@ export default function DashboardLayout({
                 {orgRole?.replace("org:", "") || "Member"}
               </span>
             </div>
+            <NotificationBell />
             <UserButton
               appearance={{
                 elements: {

@@ -81,4 +81,25 @@ export default defineSchema({
   })
     .index("by_entity", ["entityType", "entityId"])
     .index("by_org", ["organizationId"]),
+
+  notifications: defineTable({
+    recipientUserId: v.string(),
+    organizationId: v.string(),
+    type: v.union(
+      v.literal("appointment_created"),
+      v.literal("appointment_confirmed"),
+      v.literal("appointment_cancelled"),
+      v.literal("appointment_reminder"),
+      v.literal("status_changed")
+    ),
+    title: v.string(),
+    message: v.string(),
+    entityType: v.string(),
+    entityId: v.string(),
+    isRead: v.boolean(),
+    emailSent: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_recipient_org", ["recipientUserId", "organizationId"])
+    .index("by_recipient_read", ["recipientUserId", "isRead"]),
 });
