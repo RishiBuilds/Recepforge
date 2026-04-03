@@ -6,7 +6,8 @@ import { api } from "@/convex/_generated/api";
 import { useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Plus, Search, UserPlus, Users } from "lucide-react";
+import { Download, Plus, Search, UserPlus, Users } from "lucide-react";
+import { exportToCsv } from "@/app/lib/csvExport";
 
 export default function PatientsPage() {
   const { orgId } = useAuth();
@@ -28,13 +29,43 @@ export default function PatientsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold text-foreground">Patient Directory</h1>
-        <Link
-          href="/dashboard/receptionist/patients/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20"
-        >
-          <UserPlus size={16} />
-          Add Patient
-        </Link>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              if (!filtered?.length) return;
+              exportToCsv(
+                filtered,
+                [
+                  { header: "First Name", accessor: (p) => p.firstName },
+                  { header: "Last Name", accessor: (p) => p.lastName },
+                  { header: "Date of Birth", accessor: (p) => p.dateOfBirth },
+                  { header: "Gender", accessor: (p) => p.gender },
+                  { header: "Phone", accessor: (p) => p.phone },
+                  { header: "Email", accessor: (p) => p.email },
+                  { header: "Address", accessor: (p) => p.address },
+                  { header: "Insurance Provider", accessor: (p) => p.insuranceProvider },
+                  { header: "Policy Number", accessor: (p) => p.insurancePolicyNumber },
+                  { header: "Emergency Contact", accessor: (p) => p.emergencyContactName },
+                  { header: "Emergency Phone", accessor: (p) => p.emergencyContactPhone },
+                  { header: "Status", accessor: (p) => p.status },
+                ],
+                `patient_directory_${format(new Date(), "yyyy-MM-dd")}`
+              );
+            }}
+            disabled={!filtered?.length}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-surface-border text-foreground text-sm font-medium hover:bg-surface-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Download size={16} />
+            Export CSV
+          </button>
+          <Link
+            href="/dashboard/receptionist/patients/new"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20"
+          >
+            <UserPlus size={16} />
+            Add Patient
+          </Link>
+        </div>
       </div>
 
       {/* Search & Filter */}

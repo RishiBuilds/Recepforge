@@ -10,12 +10,14 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  Download,
   Filter,
   List,
   LayoutGrid,
   Plus,
   Search,
 } from "lucide-react";
+import { exportToCsv } from "@/app/lib/csvExport";
 
 const statusColors: Record<string, string> = {
   scheduled: "bg-status-scheduled",
@@ -76,13 +78,40 @@ export default function AppointmentsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold text-foreground">Appointments</h1>
-        <Link
-          href="/dashboard/receptionist/appointments/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20"
-        >
-          <Plus size={16} />
-          New Appointment
-        </Link>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              if (!filteredAppointments?.length) return;
+              const dateRange = `${format(weekStart, "MMM_d")}-${format(endOfWeek(weekStart, { weekStartsOn: 1 }), "MMM_d_yyyy")}`;
+              exportToCsv(
+                filteredAppointments,
+                [
+                  { header: "Date", accessor: (a) => a.date },
+                  { header: "Start Time", accessor: (a) => a.startTime },
+                  { header: "End Time", accessor: (a) => a.endTime },
+                  { header: "Patient First Name", accessor: (a) => a.patient?.firstName },
+                  { header: "Patient Last Name", accessor: (a) => a.patient?.lastName },
+                  { header: "Doctor", accessor: (a) => a.doctorName },
+                  { header: "Reason", accessor: (a) => a.reason },
+                  { header: "Status", accessor: (a) => a.status },
+                ],
+                `appointments_${dateRange}`
+              );
+            }}
+            disabled={!filteredAppointments?.length}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-surface-border text-foreground text-sm font-medium hover:bg-surface-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Download size={16} />
+            Export CSV
+          </button>
+          <Link
+            href="/dashboard/receptionist/appointments/new"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20"
+          >
+            <Plus size={16} />
+            New Appointment
+          </Link>
+        </div>
       </div>
 
       {/* Controls */}
