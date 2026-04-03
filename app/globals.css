@@ -334,7 +334,9 @@ html { scroll-behavior: smooth; }
   overflow: hidden;
   background:
     linear-gradient(180deg, rgba(10, 15, 26, 0.6) 0%, rgba(10, 15, 26, 0.85) 60%, var(--landing-bg) 100%),
-    url('/hero-bg.png') center top / cover no-repeat;
+    radial-gradient(600px circle at 20% 10%, rgba(45, 212, 167, 0.22), transparent 60%),
+    radial-gradient(520px circle at 85% 20%, rgba(59, 130, 246, 0.16), transparent 62%),
+    radial-gradient(520px circle at 40% 90%, rgba(245, 158, 11, 0.10), transparent 60%);
 }
 .landing-hero-glow {
   position: absolute;
@@ -793,6 +795,12 @@ html { scroll-behavior: smooth; }
   gap: 48px;
   align-items: flex-start;
 }
+
+.landing-role-mockup {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
 .landing-role-info h3 {
   font-size: 1.5rem;
   font-weight: 700;
@@ -1186,6 +1194,10 @@ html { scroll-behavior: smooth; }
   .landing-role-content {
     grid-template-columns: 1fr;
     gap: 32px;
+  }
+
+  .landing-role-mockup {
+    justify-content: center;
   }
 }
 @media (max-width: 768px) {
