@@ -12,6 +12,7 @@ import {
   Clock,
   FileText,
   CheckCircle2,
+  Bell,
   ArrowRight,
   Zap,
   ChevronRight,
@@ -309,6 +310,18 @@ export function LandingClient() {
               title: "Real-Time Sync",
               desc: "Every appointment update, patient check-in, and note change syncs instantly across all devices. No page refreshes - powered by Convex real-time database.",
               accent: "#06b6d4",
+            },
+            {
+              icon: Clock,
+              title: "Live Appointment Queue",
+              desc: "A real-time status board for patient journeys: Scheduled → Checked In → Waiting → With Doctor → Checked Out. View patient counts and average wait time instantly.",
+              accent: "#f59e0b",
+            },
+            {
+              icon: Bell,
+              title: "Appointment Reminders",
+              desc: "Automated reminders (e.g., 24h before visits) help reduce no-shows and keep patients on schedule, without extra receptionist effort.",
+              accent: "#f97316",
             },
           ].map((f) => (
             <div key={f.title} className="landing-feature-card">
